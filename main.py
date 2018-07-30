@@ -156,7 +156,7 @@ def predict(img, num_out):
     results = list(results)
     #print(results.shape)
     print(np.argmax(results))
-    print('Food={}, confidence={:0.3f}%'.format(CLASSES[np.argmax(results)], results[np.argmax(results)]*100))
+    print('Food={}, confidence={:0.3f}%'.format(CLASSES[np.argmax(results)], results[np.argmax(results)]))
     
 
 def main():
