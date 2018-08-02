@@ -6,7 +6,6 @@ from itertools import cycle
 import pickle as pk
 
 from flask import Flask, request, abort, jsonify
-from threading import Lock
 from gevent.wsgi import WSGIServer
 
 import pandas as pd
@@ -147,12 +146,12 @@ def get_model():
     model = Model(input = base_model.input, output = predictions)
     model.compile(loss = "categorical_crossentropy", optimizer = optimizers.SGD(lr=0.0001, momentum=0.9), metrics=["accuracy"])
     model.load_weights('./model.h5')
+    model._make_predict_function() 
     return model
 
 app = Flask(__name__)
 model = None
 graph = None
-lock = Lock()
 
 def read_image(im_path, width, height):
     img = Image.open(im_path)
@@ -166,9 +165,8 @@ def read_image(im_path, width, height):
 def predict(img):
 
     #img = read_image(img_path, IM_WIDTH, IM_HEIGHT)
-    with lock:
-        with graph.as_default():
-            results = model.predict(np.asarray([img]))
+    with graph.as_default():
+        results = model.predict(np.asarray([img]))
 
     results = results[0]
     results = list(results)
